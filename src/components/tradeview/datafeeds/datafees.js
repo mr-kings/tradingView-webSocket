@@ -29,7 +29,7 @@ class datafeeds {
 
   /**
    * @param {*String} symbolName  商品名称或ticker
-   * @param {*Function} onSymbolResolvedCallback 成功回调 
+   * @param {*Function} onSymbolResolvedCallback 成功回调
    * @param {*Function} onResolveErrorCallback   失败回调
    * `resolveSymbol` should return result asynchronously.
    */
@@ -62,7 +62,7 @@ class datafeeds {
    * 订阅K线数据。图表库将调用onRealtimeCallback方法以更新实时数据
    * @param {*Object} symbolInfo 商品信息
    * @param {*String} resolution 分辨率
-   * @param {*Function} onRealtimeCallback 回调函数 
+   * @param {*Function} onRealtimeCallback 回调函数
    * @param {*String} subscriberUID 监听的唯一标识符
    * @param {*Function} onResetCacheNeededCallback (从1.7开始): 将在bars数据发生变化时执行
    */

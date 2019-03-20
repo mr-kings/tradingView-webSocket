@@ -54,8 +54,10 @@ class dataUpdater {
       if (bars.length < 2) {
         throw new Error('Not enough bars in history for proper pulse update. Need at least 2.');
       }
-
-      const previousBar = bars[bars.length - 2]
+      console.log('bars[bars.length - 1]', bars[bars.length - 1])
+      console.log('bars[bars.length - 2]', bars[bars.length - 2])
+      //const previousBar = bars[bars.length - 2]
+      const previousBar = bars[bars.length - 1]
       subscriptionRecord.listener(previousBar)
     }
 

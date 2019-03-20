@@ -22,6 +22,7 @@ export default {
     }
   },
   created() {
+    // 开启websocket
     this.socket.doOpen()
     this.socket.on('open', () => {
       this.socket.send({ cmd: 'req', args: [`candle.M5.btcusdt}`, 1440, parseInt(Date.now() / 1000)] })
@@ -29,12 +30,13 @@ export default {
     this.socket.on('message', this.onMessage)
   },
   methods: {
+    // 初始化tradingview
     init(symbol = 'BTCUSDT', interval = 5) {
       if (!this.widget) {
         this.widget = new TvWidget({
           symbol: symbol,
           interval: interval,
-          // fullscreen: true,
+          fullscreen: true,
           container_id: 'trade-view',
           datafeed: this.datafeeds,
           library_path: '/static/tradeview/charting_library/',
@@ -48,6 +50,7 @@ export default {
         this.interval = interval
       }
     },
+    // 发送websocket信息
     sendMessage(data) {
       if (this.socket.checkOpen()) {
         this.socket.send(data)
@@ -57,6 +60,7 @@ export default {
         })
       }
     },
+    // 取消订阅
     unSubscribe(interval) {
       if (interval < 60) {
         this.sendMessage({ cmd: 'unsub', args: [`candle.M${interval}.${this.symbol.toLowerCase()}`, 1440, parseInt(Date.now() / 1000)] })
@@ -66,6 +70,7 @@ export default {
         this.sendMessage({ cmd: 'unsub', args: [`candle.D1.${this.symbol.toLowerCase()}`, 207, parseInt(Date.now() / 1000)] })
       }
     },
+    // 订阅K线实时数据
     subscribe() {
       if (this.interval < 60) {
         this.sendMessage({ cmd: 'sub', args: [`candle.M${this.interval}.${this.symbol.toLowerCase()}`] })
@@ -75,8 +80,10 @@ export default {
         this.sendMessage({ cmd: 'sub', args: [`candle.D1.${this.symbol.toLowerCase()}`] })
       }
     },
+    // webscoket返回数据
     onMessage(data) {
-      // console.log(data)
+      console.log('onMessage data: ' + data)
+      // 返回数据存在历史数据(历史数据)
       if (data.data && data.data.length) {
         const list = []
         const ticker = `${this.symbol}-${this.interval}`
@@ -93,9 +100,11 @@ export default {
         this.cacheData[ticker] = list
         this.lastTime = list[list.length - 1].time
         this.subscribe()
+        console.log(list)
       }
+      // 返回数据类型为(订阅数据)
       if (data.type && data.type.indexOf(this.symbol.toLowerCase()) !== -1) {
-        // console.log(' >> sub:', data.type)
+        console.log(' >> sub:', data.type)
         this.datafeeds.barsUpdater.updateData()
         const ticker = `${this.symbol}-${this.interval}`
         const barsData = {
@@ -111,8 +120,9 @@ export default {
         }
       }
     },
+    // 获取历史数据
     getBars(symbolInfo, resolution, rangeStartDate, rangeEndDate, onLoadedCallback) {
-      // console.log(' >> :', rangeStartDate, rangeEndDate)
+      console.log(' getBars >> :', new Date(rangeStartDate * 1000).toLocaleString() , new Date(rangeEndDate * 1000).toLocaleString())
       if (this.interval !== resolution) {
         this.unSubscribe(this.interval)
         this.interval = resolution
